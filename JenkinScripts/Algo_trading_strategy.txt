@@ -1,0 +1,28 @@
+#!/bin/bash
+# Check if virtual environment already exists
+if [ ! -d ".venv" ]; then
+    python -m venv .venv
+fi
+
+# Activating virtual environment
+source .venv/bin/activate
+
+curl https://packages.microsoft.com/config/rhel/9/prod.repo | sudo tee /etc/yum.repos.d/mssql-release.repo
+
+sudo ACCEPT_EULA=Y yum install -y msodbcsql18
+
+sudo yum install -y unixODBC-devel
+
+# Setup python path to the project directory
+export PYTHONPATH=/var/lib/jenkins/workspace/algo_trading/:$PYTHONPATH
+
+# installing dependencies
+pip install -r requirement.txt
+SOURCE="Source = 'S3'
+"
+echo "$SOURCE" | sudo tee /var/lib/jenkins/workspace/algo_trading/src/trading_algo/source.py > /dev/null
+python src/trading_algo/range_data_interface_for_live_and_historical.py
+
+if [ -n "$VIRTUAL_ENV" ]; then
+    deactivate
+fi

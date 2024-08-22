@@ -1,0 +1,11 @@
+pandas
+requests
+ta
+pandas_ta
+google-auth
+requests
+google-api-python-client
+google-auth-oauthlib
+Boto3
+pyodbc
+azure-cosmos
